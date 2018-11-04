@@ -9,7 +9,7 @@ class ViewController: UIViewController, MGLMapViewDelegate {
     var mapView: NavigationMapView!
     var directionsRoute: Route?
     static var flag = false
-    static var vals: String? = nil
+    static var vals: [String: Any]?
     
     
     // #-end-code-snippet: navigation vc-variables-swift
@@ -28,15 +28,28 @@ class ViewController: UIViewController, MGLMapViewDelegate {
 //        mapView.setLocationSource
         mapView.showsUserLocation = true
         mapView.setUserTrackingMode(.follow, animated: true)
-        Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: "timerDidFire:", userInfo: nil, repeats: true)
+        Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(timerDidFire), userInfo: nil, repeats: true)
 
         // Add a gesture recognizer to the map view
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
         mapView.addGestureRecognizer(longPress)
     }
     
-    func timerDidFire() {
+    @objc func timerDidFire() {
         print("fired")
+        print("latitude")
+        print(String(mapView.userLocation!.coordinate.latitude))
+        print("longitude")
+        print(String(mapView.userLocation!.coordinate.longitude))
+        GasRequests.getStations(lat: String(mapView.userLocation!.coordinate.latitude), long: String(mapView.userLocation!.coordinate.longitude), radius: "3")
+        if let dict = ViewController.vals  {
+            print(dict["stations"])
+            if let x = dict["stations"] as! [String: Any] {
+                print("in")
+            }
+        }
+        
+        
     }
     // #-end-code-snippet: navigation view-did-load-swift
     // #-code-snippet: navigation long-press-swift
@@ -53,11 +66,7 @@ class ViewController: UIViewController, MGLMapViewDelegate {
         annotation.title = "Start navigation"
         mapView.addAnnotation(annotation)
         
-        print("latitude")
-        print(String(mapView.userLocation!.coordinate.latitude))
-        print("longitude")
-        print(String(mapView.userLocation!.coordinate.longitude))
-        print(GasRequests.getStations(lat: String(mapView.userLocation!.coordinate.latitude), long: String(mapView.userLocation!.coordinate.longitude), radius: "3"))
+        
         
         
         // Calculate the route from the user's location to the set destination

@@ -32,17 +32,17 @@ public class GasRequests {
                 data = data.replacingOccurrences(of: ")", with: "")
                 data = data.replacingOccurrences(of: "?", with: "")
                 data = data.replacingOccurrences(of: " ", with: "")
-                let d = JSON(data)
-                print(d.type)
+//                let d = JSON(data)
+//                print(d.type)
                 ViewController.flag = true
-                ViewController.vals = convertToDictionary(text: String(d))
+                ViewController.vals = convertToDictionary(text: data)
             case .failure(let error):
                 print("\(error)")
             }
         }
     }
     
-    func convertToDictionary(text: String) -> [String: Any]? {
+    static func convertToDictionary(text: String) -> [String: Any]? {
         if let data = text.data(using: .utf8) {
             do {
                 return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
